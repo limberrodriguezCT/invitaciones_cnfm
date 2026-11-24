@@ -17,6 +17,9 @@ Route::get('/invitacion/{graduate}', [InvitationController::class, 'show'])
 Route::post('/invitacion/{graduate}/confirmar', [InvitationController::class, 'confirm'])
     ->name('invitation.confirm');
 
+Route::post('/invitacion/{graduate}/no-asistira', [InvitationController::class, 'decline'])
+    ->name('invitation.decline');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [GraduateController::class, 'index'])->name('dashboard');
     Route::get('/graduates/grupo/{grupo}', [GraduateController::class, 'showGroup'])->name('graduates.group');

@@ -14,17 +14,23 @@ class Graduate extends Model
         'nombre_completo',
         'carrera',
         'grupo',
-        'cedula',
         'caso_especial',
         'asistencia_confirmada',
         'confirmado_en',
+        'no_asistira',
+        'rechazado_en',
     ];
 
-    protected $casts = [
-        'caso_especial' => 'boolean',
-        'asistencia_confirmada' => 'boolean',
-        'confirmado_en' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'caso_especial' => 'boolean',
+            'asistencia_confirmada' => 'boolean',
+            'confirmado_en' => 'datetime',
+            'no_asistira' => 'boolean',
+            'rechazado_en' => 'datetime',
+        ];
+    }
 
     public function getRouteKeyName(): string
     {

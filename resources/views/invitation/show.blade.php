@@ -247,17 +247,28 @@
                     </div>
 
                     <div class="mt-10 pt-8 border-t border-slate-100 anim-delay-3">
-                        @if(!$graduate->asistencia_confirmada)
+                        @if(!$graduate->asistencia_confirmada && !$graduate->no_asistira)
                             <div id="confirmation-pending">
-                                <p class="text-xs font-semibold text-slate-500 mb-4">
+                                <p class="text-xs font-semibold text-slate-500 mb-5">
                                     Por favor, confirma tu participación para reservar tu lugar en el acto de promoción.
                                 </p>
-                                <button id="btn-confirmar" type="button" class="w-full sm:w-auto inline-flex items-center justify-center px-10 py-4 rounded-full bg-gradient-to-r from-[#e91e63] to-[#c2185b] hover:from-[#c2185b] hover:to-[#a3134b] text-white text-sm font-extrabold uppercase tracking-widest shadow-[0_12px_30px_rgba(233,30,99,0.4)] hover:shadow-[0_16px_35px_rgba(233,30,99,0.55)] transform hover:-translate-y-0.5 active:translate-y-0 transition-all gap-3">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/>
-                                    </svg>
-                                    <span id="btn-confirmar-text">Confirmar Mi Asistencia</span>
-                                </button>
+
+                                <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+                                    <button id="btn-confirmar" type="button" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-full bg-gradient-to-r from-[#e91e63] to-[#c2185b] hover:from-[#c2185b] hover:to-[#a3134b] text-white text-xs sm:text-sm font-extrabold uppercase tracking-widest shadow-[0_12px_30px_rgba(233,30,99,0.4)] hover:shadow-[0_16px_35px_rgba(233,30,99,0.55)] transform hover:-translate-y-0.5 active:translate-y-0 transition-all gap-2.5">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        <span id="btn-confirmar-text">Confirmar Mi Asistencia</span>
+                                    </button>
+
+                                    <button id="btn-no-asistira" type="button" onclick="openDeclineModal()" class="w-full sm:w-auto inline-flex items-center justify-center px-7 py-4 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300/80 text-xs sm:text-sm font-bold uppercase tracking-wider transition-all gap-2">
+                                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                        <span>No Podré Asistir</span>
+                                    </button>
+                                </div>
+
                                 <p id="confirmation-error" class="hidden text-xs font-bold text-[#e91e63] mt-3"></p>
                             </div>
                         @endif
@@ -291,19 +302,63 @@
                                 </button>
                             </div>
                         </div>
+
+                        <!-- Mensaje de Inasistencia Registrada -->
+                        <div id="confirmation-declined" class="{{ $graduate->no_asistira ? 'block' : 'hidden' }} transition-all duration-500">
+                            <div class="inline-flex flex-col items-center justify-center px-8 py-7 rounded-2xl bg-slate-50 border-2 border-slate-200 max-w-md mx-auto shadow-sm">
+                                <div class="w-14 h-14 rounded-full bg-slate-700 text-white flex items-center justify-center mb-3.5 shadow-sm">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <span class="px-3 py-0.5 rounded-full bg-slate-200 text-slate-700 text-[10px] font-extrabold uppercase tracking-widest mb-2">
+                                    Respuesta Registrada
+                                </span>
+                                <h3 class="text-lg font-extrabold text-[#0b4377] uppercase tracking-wide">
+                                    Inasistencia Notificada
+                                </h3>
+                                <p class="text-xs text-slate-600 font-medium mt-1.5 leading-relaxed">
+                                    Hemos registrado que no podrás acompañarnos en la ceremonia. Muchas felicidades por alcanzar esta meta profesional.
+                                </p>
+                                <p id="declined-timestamp" class="text-[11px] font-mono font-semibold text-slate-600 mt-4 bg-white px-4 py-1.5 rounded-full border border-slate-200">
+                                    Registrado el: {{ $graduate->rechazado_en ? $graduate->rechazado_en->format('d/m/Y h:i A') : '' }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                 </section>
 
-                <footer class="bg-slate-50 px-6 py-4 border-t border-slate-100 text-center">
-                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
-                        Educación Técnica y Formación Docente de Calidad
-                    </p>
-                </footer>
-
             </div>
         </div>
     </main>
+
+    <!-- Modal de Confirmación de Inasistencia -->
+    <div id="decline-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-[#060d1b]/80 backdrop-blur-xs">
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden anim-pass-modal">
+            <div class="h-1.5 bg-gradient-to-r from-slate-600 via-[#0b4377] to-[#e91e63]"></div>
+            <div class="p-7 text-center">
+                <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-extrabold text-[#0b4377]">¿Confirmas que no podrás asistir?</h3>
+                <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+                    Al confirmar esta opción notificaremos a la coordinación académica que no asistirás al acto de promoción.
+                </p>
+
+                <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <button type="button" onclick="closeDeclineModal()" class="w-full sm:w-auto px-5 py-3 rounded-xl border border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-600 hover:bg-slate-50 transition-colors">
+                        Cancelar
+                    </button>
+                    <button id="btn-confirmar-rechazo" type="button" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-extrabold uppercase tracking-wider shadow-sm transition-colors">
+                        Sí, No Podré Asistir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Ventana Emergente Celebratoria de Alto Impacto UI/UX -->
     <div id="celebration-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-[#060d1b]/85 backdrop-blur-md">
@@ -381,6 +436,7 @@
 
     <script>
         const yaConfirmado = @json($graduate->asistencia_confirmada);
+        const yaRechazado = @json($graduate->no_asistira);
 
         function lanzarCelebracion() {
             const colors = ['#0b4377', '#00aeef', '#e91e63', '#10b981', '#f59e0b'];
@@ -420,19 +476,44 @@
             }
         }
 
+        function openDeclineModal() {
+            const modal = document.getElementById('decline-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDeclineModal() {
+            const modal = document.getElementById('decline-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
         document.getElementById('celebration-modal').addEventListener('click', function (e) {
             if (e.target === this) {
                 closeCelebrationModal();
             }
         });
 
+        document.getElementById('decline-modal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeDeclineModal();
+            }
+        });
+
         window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(lanzarCelebracion, 450);
+            if (!yaRechazado) {
+                setTimeout(lanzarCelebracion, 450);
+            }
 
             if (yaConfirmado) {
                 const successBox = document.getElementById('confirmation-success');
                 setTimeout(() => {
                     successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 700);
+            } else if (yaRechazado) {
+                const declinedBox = document.getElementById('confirmation-declined');
+                setTimeout(() => {
+                    declinedBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }, 700);
             }
         });
@@ -441,9 +522,11 @@
         if (btnConfirmar) {
             btnConfirmar.addEventListener('click', function () {
                 const btnText = document.getElementById('btn-confirmar-text');
+                const btnNoAsistira = document.getElementById('btn-no-asistira');
                 const errorText = document.getElementById('confirmation-error');
 
                 btnConfirmar.disabled = true;
+                if (btnNoAsistira) btnNoAsistira.disabled = true;
                 btnConfirmar.classList.add('opacity-75', 'cursor-not-allowed');
                 btnText.textContent = 'Registrando Confirmación...';
                 errorText.classList.add('hidden');
@@ -460,9 +543,7 @@
                     const data = await response.json();
                     if (response.ok || response.status === 409) {
                         const pendingBox = document.getElementById('confirmation-pending');
-                        if (pendingBox) {
-                            pendingBox.remove();
-                        }
+                        if (pendingBox) pendingBox.remove();
 
                         const successBox = document.getElementById('confirmation-success');
                         document.getElementById('confirmed-timestamp').textContent = 'Confirmado el: ' + data.confirmado_en;
@@ -478,10 +559,58 @@
                 })
                 .catch(() => {
                     btnConfirmar.disabled = false;
+                    if (btnNoAsistira) btnNoAsistira.disabled = false;
                     btnConfirmar.classList.remove('opacity-75', 'cursor-not-allowed');
                     btnText.textContent = 'Confirmar Mi Asistencia';
                     errorText.textContent = 'No se pudo completar el registro. Verifica tu conexión e intenta nuevamente.';
                     errorText.classList.remove('hidden');
+                });
+            });
+        }
+
+        const btnConfirmarRechazo = document.getElementById('btn-confirmar-rechazo');
+        if (btnConfirmarRechazo) {
+            btnConfirmarRechazo.addEventListener('click', function () {
+                const errorText = document.getElementById('confirmation-error');
+
+                btnConfirmarRechazo.disabled = true;
+                btnConfirmarRechazo.classList.add('opacity-75', 'cursor-not-allowed');
+                btnConfirmarRechazo.textContent = 'Registrando...';
+
+                fetch('{{ route("invitation.decline", $graduate) }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(async response => {
+                    const data = await response.json();
+                    if (response.ok || response.status === 409) {
+                        closeDeclineModal();
+
+                        const pendingBox = document.getElementById('confirmation-pending');
+                        if (pendingBox) pendingBox.remove();
+
+                        const declinedBox = document.getElementById('confirmation-declined');
+                        document.getElementById('declined-timestamp').textContent = 'Registrado el: ' + data.rechazado_en;
+                        declinedBox.classList.remove('hidden');
+                        declinedBox.classList.add('anim-card');
+                        declinedBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        throw new Error('Error al registrar respuesta');
+                    }
+                })
+                .catch(() => {
+                    closeDeclineModal();
+                    btnConfirmarRechazo.disabled = false;
+                    btnConfirmarRechazo.classList.remove('opacity-75', 'cursor-not-allowed');
+                    btnConfirmarRechazo.textContent = 'Sí, No Podré Asistir';
+                    if (errorText) {
+                        errorText.textContent = 'No se pudo registrar tu respuesta. Verifica tu conexión e intenta nuevamente.';
+                        errorText.classList.remove('hidden');
+                    }
                 });
             });
         }
