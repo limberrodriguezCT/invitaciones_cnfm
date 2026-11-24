@@ -1,47 +1,54 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <div class="mb-6 text-center">
+        <h2 class="text-xl font-extrabold text-[#0b4377]">Iniciar Sesión</h2>
+        <p class="text-xs text-slate-500 mt-1">Ingresa tus credenciales institucionales para administrar el evento</p>
+    </div>
 
-    <form method="POST" action="{{ route('login') }}">
+    @if (session('status'))
+        <div class="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-700">
+            {{ session('status') }}
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('login') }}" class="space-y-5">
         @csrf
 
-        <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                Correo Electrónico
+            </label>
+            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" placeholder="admin@cnfm.edu.ni"
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-800 focus:border-[#00aeef] focus:ring-2 focus:ring-[#00aeef]/20 transition-all outline-none">
+            @error('email')
+                <p class="mt-1.5 text-xs font-semibold text-[#e91e63]">{{ $message }}</p>
+            @enderror
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div>
+            <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                Contraseña
+            </label>
+            <input id="password" type="password" name="password" required autocomplete="current-password" placeholder="••••••••"
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-800 focus:border-[#00aeef] focus:ring-2 focus:ring-[#00aeef]/20 transition-all outline-none">
+            @error('password')
+                <p class="mt-1.5 text-xs font-semibold text-[#e91e63]">{{ $message }}</p>
+            @enderror
         </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+        <div class="flex items-center">
+            <input id="remember_me" type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 text-[#0b4377] focus:ring-[#00aeef]">
+            <label for="remember_me" class="ml-2 text-xs font-medium text-slate-600 cursor-pointer">
+                Mantener sesión activa
             </label>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+        <div class="pt-2">
+            <button type="submit" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#0b4377] to-[#13599b] hover:from-[#083259] hover:to-[#0b4377] text-white text-xs font-extrabold uppercase tracking-widest shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                <span>Ingresar al Panel</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                </svg>
+            </button>
         </div>
     </form>
 </x-guest-layout>
